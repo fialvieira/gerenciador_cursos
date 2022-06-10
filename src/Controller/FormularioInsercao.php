@@ -4,8 +4,16 @@ namespace Alura\Cursos\Controller;
 
 class FormularioInsercao implements InterfaceControladorRequisicao
 {
-    public function processaRequisicao($titulo = null) : void
+    private $titulo;
+
+    public function __construct()
     {
+        $this->titulo = 'Novo curso';
+    }
+
+    public function processaRequisicao(): void
+    {
+        $titulo = $this->titulo;
         require __DIR__ . '/../../view/cursos/formulario.php';
     }
 }

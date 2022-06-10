@@ -2,23 +2,22 @@
 
 require __DIR__ . '/../vendor/autoload.php';
 
+use Alura\Cursos\Controller\InterfaceControladorRequisicao;
 use Alura\Cursos\Controller\ListarCursos;
 use Alura\Cursos\Controller\FormularioInsercao;
 use Alura\Cursos\Controller\Persistencia;
 
-switch ($_SERVER['REQUEST_URI']) {
-    case '/gerenciador_cursos/public/listar-cursos':
-        $controlador = new ListarCursos();
-        $controlador->processaRequisicao('Listar cursos');
-        break;
-    case '/gerenciador_cursos/public/novo-curso':
-        $controlador = new FormularioInsercao();
-        $controlador->processaRequisicao('Novo curso');
-        break;
-    case '/gerenciador_cursos/public/salvar-curso':
-        $controlador = new Persistencia();
-        $controlador->processaRequisicao();
-        break;
-    default:
-        echo "Erro 404";
+$caminho = $_SERVER['REQUEST_URI'];
+$rotas = require __DIR__ . '/../config/routes.php';
+
+if (!array_key_exists($caminho, $rotas)) {
+    http_response_code(404);
+    exit();
 }
+
+$classeControladora = $rotas[$caminho];
+/**
+ * @var InterfaceControladorRequisicao $controlador
+ */
+$controlador = new $classeControladora();  // Se tiver uma string com o nome de uma classe em uma variável o PHP interpreta como ela
+$controlador->processaRequisicao();

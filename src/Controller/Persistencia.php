@@ -14,7 +14,7 @@ class Persistencia implements InterfaceControladorRequisicao
         $this->entityManager = (new EntityManagerCreator())->getEntityManager();
     }
 
-    public function processaRequisicao($titulo = null): void
+    public function processaRequisicao(): void
     {
         $descricao = filter_input(
             INPUT_POST,
@@ -25,5 +25,7 @@ class Persistencia implements InterfaceControladorRequisicao
         $curso->setDescricao($descricao);
         $this->entityManager->persist($curso);
         $this->entityManager->flush();
+
+        header('Location: /gerenciador_cursos/public/listar-cursos', false, 302);
     }
 }
