@@ -4,32 +4,32 @@ namespace Alura\Cursos\Controller;
 
 use Alura\Cursos\Entity\Curso;
 use Alura\Cursos\Helper\FlashMessageTrait;
-use Alura\Cursos\Infra\EntityManagerCreator;
+use Doctrine\ORM\EntityManagerInterface;
+use Nyholm\Psr7\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-class Persistencia implements InterfaceControladorRequisicao
+class Persistencia implements RequestHandlerInterface
 {
     use FlashMessageTrait;
 
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct()
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->entityManager = (new EntityManagerCreator())->getEntityManager();
+        $this->entityManager = $entityManager;
     }
 
-    public function processaRequisicao(): void
+    public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $id = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
-        $descricao = filter_input(
-            INPUT_POST,
-            'descricao',
-            FILTER_SANITIZE_STRING
-        );
+        $queryString = $request->getQueryParams();
+        $idEntidade = (array_key_exists('id', $queryString)) ? filter_var($queryString['id'], FILTER_VALIDATE_INT): null;
+        $descricao = strip_tags($request->getParsedBody()['descricao']);
         $curso = new Curso();
         $curso->setDescricao($descricao);
-
-        if (!is_null($id) && $id !== false) {
-            $curso->setId($id);
+        if (!is_null($idEntidade) && $idEntidade !== false) {
+            $curso->setId($idEntidade);
             $this->entityManager->merge($curso);
             $mensagem = 'Curso atualizado com sucesso';
         } else {
@@ -38,6 +38,6 @@ class Persistencia implements InterfaceControladorRequisicao
         }
         $this->defineMensagem('success', $mensagem);
         $this->entityManager->flush();
-        header('Location: /gerenciador_cursos/public/listar-cursos', false, 302);
+        return new Response(302, ['Location' => '/gerenciador_cursos/public/listar-cursos']);
     }
 }

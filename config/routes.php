@@ -1,6 +1,8 @@
 <?php
 
-use Alura\Cursos\Controller\{Deslogar,
+use Alura\Cursos\Controller\{CursosEmJson,
+    CursosEmXml,
+    Deslogar,
     Exclusao,
     FormularioEdicao,
     FormularioInsercao,
@@ -17,5 +19,7 @@ return [
     '/gerenciador_cursos/public/atualizar-curso' => FormularioEdicao::class,
     '/gerenciador_cursos/public/login' => FormularioLogin::class,
     '/gerenciador_cursos/public/realiza-login' => RealizaLogin::class,
-    '/gerenciador_cursos/public/logout' => Deslogar::class
+    '/gerenciador_cursos/public/logout' => Deslogar::class,
+    '/gerenciador_cursos/public/buscarCursosEmJson' => CursosEmJson::class,
+    '/gerenciador_cursos/public/buscarCursosEmXml' => CursosEmXml::class
 ];
